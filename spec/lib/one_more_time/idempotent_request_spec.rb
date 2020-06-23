@@ -231,21 +231,17 @@ RSpec.describe OneMoreTime::IdempotentRequest, type: :model do
     end
   end
 
-  describe "#finish!" do
-    subject(:call) { idempotent_request.finish! }
+  describe "#success!" do
+    subject(:call) { idempotent_request.success! }
 
     let(:locked_at) { Time.current }
 
-    before do
-      Timecop.freeze(Time.current.round)
-    end
-
     it "unlocks the record" do
-      expect { call }.to change { idempotent_request.locked_at }.from(Time.current).to(nil)
+      expect { call }.to change { idempotent_request.locked_at }.from(locked_at).to(nil)
     end
 
     it "yields" do
-      expect { |block| idempotent_request.finish!(&block) }.to yield_control
+      expect { |block| idempotent_request.success!(&block) }.to yield_control
     end
 
     context "when success_attributes have been specified" do
@@ -273,7 +269,7 @@ RSpec.describe OneMoreTime::IdempotentRequest, type: :model do
     context "when an error is raised" do
       let(:unrelated_record) { described_class.new(idempotency_key: idempotency_key + "_foo") }
       let(:call_with_rescue) do
-        idempotent_request.finish! do
+        idempotent_request.success! do
           unrelated_record.save!
         end
       rescue StandardError

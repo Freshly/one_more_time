@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module OneMoreTime
-  class IdempotentRequest < ::ActiveRecord::Base
+  class IdempotentRequest < ActiveRecord::Base
     class Error < StandardError; end
     class PermanentError < Error; end
     class RequestInProgressError < Error; end
@@ -42,10 +42,10 @@ module OneMoreTime
       update!(attrs)
     end
 
-    def finish!
+    def success!
       ActiveRecord::Base.transaction do
-        yield if block_given?
-        success_attributes = @success_attributes_block&.call || {}
+        result = yield if block_given?
+        success_attributes = @success_attributes_block&.call(result) || {}
         unlock!(response_code: success_attributes[:response_code], response_body: success_attributes[:response_body])
       end
     rescue StandardError
