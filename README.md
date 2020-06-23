@@ -49,17 +49,20 @@ In order to guarantee idempotency, One More Time assumes a request can be divide
 Let's see how this looks in code. Imagine this is a rails controller.
 
 ```ruby
-
-# We start off by getting an IdempotentRequest record similarly to Rails' create_or_find_by. When first created, the record is in a "locked" state so no other server process will be able to work on the same request.
+# We start off by getting an IdempotentRequest record similarly to Rails' create_or_find_by.
+# When first created, the record is in a "locked" state so no other server process will be
+# able to work on the same request.
 idempotent_request = IdempotentRequest.start!(
   # This value is supplied by the client and is what uniquely identifies a request
   idempotency_key: request.headers["Idempotency-Key"],
-  # If supplied, these values will be used to verify that the incoming request data matches the stored data (when a record with the given idempotency_key already exists).
+  # If supplied, these values will be used to verify that the incoming request data matches
+  # the stored data (when a record with the given idempotency_key already exists).
   request_path: "#{request.method} #{request.path}",
   request_body: request.raw_post,
   )
 
-# Tell the idempotent_request how to convert a successful result into response data stored on the record
+# Tell the idempotent_request how to convert a successful result into response data stored
+# on the record
 idempotent_request.success_attributes do |result|
   {
     response_code: 200,
@@ -74,17 +77,21 @@ idempotent_request.error_attributes do |exception|
     response_body: { error: exception.message }.to_json,
   }
 end
+```
 
-# Everything up to this point should exist only once, as framework-level code in your app. Individual endpoint implementations should be provided with the idempotent_request object and only need to use the following pattern.
+Everything up to this point should exist only once, as framework-level code in your app. Individual endpoint implementations should be provided with the `idempotent_request` object and only need to use the following pattern:
 
-# Wrap your request in a block sent to the execute method. If the idempotent_request already has a stored response, the block will be skipped entirely.
+```ruby
+# Wrap your request in a block sent to the execute method. If the idempotent_request already
+# has a stored response, the block will be skipped entirely.
 idempotent_request.execute do
   # Make your external service call
   # widget = ExternalService.purchase_widget
 
-  # Call the success! method with a block. The block is automatically run in a transaction and should contain any code needed to persist the results of your external service call.
+  # Call the success! method with a block. The block is automatically run in a transaction
+  # and should contain any code needed to persist the results of your external service call.
   idempotent_request.success! do
-    # The return value of this block is what gets passed to the success_attributes callback above
+    # The return value of this block is what gets passed to the success_attributes callback
     # Widgets.create!(widget_id: widget.id)
   end
 end
