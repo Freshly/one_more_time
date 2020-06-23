@@ -17,7 +17,7 @@ As a library for idempotency, One More Time serves two main purposes:
 
 To accomplish these, this gem provides a single ActiveRecord model called `IdempotentRequest` with some additional methods added. You call those methods at specific points in the lifecycle of your request, and idempotency is guaranteed for you.
 
-Generic solutions (i.e. drop-in Rack plugins) for idempotency do exist, however they can't handle requests that fail during processing very well because they don't know _when_ a request becomes unsafe to retry. If your endpoint itself only calls idempotent services, then retries are always safe and a generic solution will suffice.
+Generic solutions (i.e. drop-in Rack plugins) for idempotency do exist, however they can't handle requests that fail during processing very well because they don't know _when_ a request becomes unsafe to retry. If there's nothing you're afraid to retry when your request is left in an undefined state, a generic solution will suffice.
 
 🚨 **Note**: One More Time is intended as middleware and does not know about the network procotol being used; it only provides dumb storage for request and response data. Thus you will need to tell the gem how to store incoming requests, as well as how to convert stored responses into actual responses at the network level. The goal would be to write this glue code once for a given Ruby application framework (e.g. Rails controllers, Gruf, Sinatra) and then re-use it thereafter.
 
