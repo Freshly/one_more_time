@@ -1,3 +1,6 @@
+.bundle/
+log/*.log
+pkg/
 .ruby-gemset
 
 .DS_Store

@@ -30,7 +30,7 @@ In progress
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Freshly/spicerack.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Freshly/one_more_time.
 
 ## License
 
