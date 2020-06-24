@@ -71,7 +71,7 @@ idempotent_request.success_attributes do |result|
 end
 
 # Similarly, convert an exception that has been raised into a stored response
-idempotent_request.error_attributes do |exception|
+idempotent_request.failure_attributes do |exception|
   {
     response_code: 500,
     response_body: { error: exception.message }.to_json,
@@ -85,8 +85,18 @@ Everything up to this point should exist only once, as framework-level code in y
 # Wrap your request in a block sent to the execute method. If the idempotent_request already
 # has a stored response, the block will be skipped entirely.
 idempotent_request.execute do
-  # Make your external service call
-  # widget = ExternalService.purchase_widget
+  # Validate the request params as needed
+  # raise ActionController::BadRequest unless params[:widget_name].present?
+  
+  # Make an external, non-idempotent service call
+  # begin
+  #   widget = ExternalService.purchase_widget(params[:widget_name])
+  # rescue ExternalService::ConnectionLostError
+  #   We sent data to the external service but don't know whether it was fully processed.
+  #   If a widget is something we can't afford to accidentally create twice, we need to 
+  #   give up and store an error response on this request so it can't be retried.
+  #   idempotent_request.failure! # this will invoke the failure_attributes callback
+  # end
 
   # Call the success! method with a block. The block is automatically run in a transaction
   # and should contain any code needed to persist the results of your external service call.
