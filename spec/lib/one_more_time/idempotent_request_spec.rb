@@ -159,7 +159,7 @@ RSpec.describe OneMoreTime::IdempotentRequest, type: :model do
       let(:exception) { described_class::PermanentError.new(exception_message) }
 
       before do
-        idempotent_request.error_attributes do |exception|
+        idempotent_request.failure_attributes do |exception|
           {
             response_code: random_response_code,
             response_body: exception.message,

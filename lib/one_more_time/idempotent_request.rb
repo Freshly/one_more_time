@@ -11,8 +11,8 @@ module OneMoreTime
       @success_attributes_block = block
     end
 
-    def error_attributes(&block)
-      @error_attributes_block = block
+    def failure_attributes(&block)
+      @failure_attributes_block = block
     end
 
     def saved_response(&block)
@@ -26,8 +26,8 @@ module OneMoreTime
       begin
         yield if block_given?
       rescue IdempotentRequest::PermanentError => exception
-        error_attributes = @error_attributes_block&.call(exception) || {}
-        unlock!(response_code: error_attributes[:response_code], response_body: error_attributes[:response_body])
+        failure_attributes = @failure_attributes_block&.call(exception) || {}
+        unlock!(response_code: failure_attributes[:response_code], response_body: failure_attributes[:response_body])
         call_saved_response
       rescue StandardError
         unlock!
@@ -52,7 +52,7 @@ module OneMoreTime
       raise PermanentError
     end
 
-    def permanent_error!
+    def failure!
       raise PermanentError
     end
 
