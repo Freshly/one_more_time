@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email       = ["andrew.cross@freshly.com"]
   spec.homepage    = "https://github.com/Freshly/one_more_time"
   spec.summary     = "A simple gem to help make your API idempotent"
-  spec.description = "Use an ActiveRecord model to store previous responses and guarantee safe retries."
+  spec.description = "Use your database to store previous responses and guarantee safe retries."
   spec.license     = "MIT"
 
   spec.files = Dir["{bin,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
