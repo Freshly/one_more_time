@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OneMoreTime
+module OneMoreTime
   class IdempotentRequest < ActiveRecord::Base
     def success_attributes(&block)
       @success_attributes_block = block

@@ -3,7 +3,7 @@
 require "active_record"
 require "one_more_time/idempotent_request"
 
-class OneMoreTime
+module OneMoreTime
   class Error < StandardError; end
   class RequestInProgressError < Error; end
   class RequestMismatchError < Error; end
