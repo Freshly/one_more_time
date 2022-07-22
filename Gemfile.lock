@@ -39,7 +39,7 @@ GEM
     sqlite3 (1.4.2)
     thread_safe (0.3.6)
     timecop (0.9.1)
-    tzinfo (1.2.7)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     zeitwerk (2.3.0)
 
